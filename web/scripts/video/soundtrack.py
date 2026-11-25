@@ -95,6 +95,8 @@ def main(cues_path, out):
         clip = read_wav(own_lights); i = int(first_light * SR); j = min(n, i + len(clip)); fx[i:j] += clip[: j - i] * 0.9
     for q in cues:
         i = int(q['t'] * SR)
+        if q['type'] in ('blip', 'launch'):                        # no engine under the lights or the launch: the score carries it
+            continue
         if q['type'] in ('blip', 'launch', 'passby'):              # the engine (stereo)
             s = (engine.blip(q.get('n', 0)) * 0.5 if q['type'] == 'blip' else engine.launch() * 0.75 if q['type'] == 'launch'
                  else engine.passby(direction=q.get('dir', 1)) * 1.1)
