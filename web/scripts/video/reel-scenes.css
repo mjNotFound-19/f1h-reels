@@ -1,0 +1,41 @@
+/* f1.h reel, 1920 x 1080: the scenes. */
+.lightsup .cam { display: grid; place-content: center; gap: 70px; padding: 0; }
+.lights { display: flex; gap: 46px; justify-content: center; }
+.gantry { display: grid; gap: 22px; padding: 26px 22px; background: #050608; border-radius: 26px; box-shadow: inset 0 0 0 2px #1c1f26, 0 20px 50px rgba(0, 0, 0, .6); }
+.lamp { display: block; width: 118px; height: 118px; border-radius: 50%; background: radial-gradient(circle at 40% 35%, #ff6a6a, #e10600 45%, #5a0000 80%); box-shadow: 0 0 60px rgba(255, 20, 20, .7); filter: brightness(.18); }
+
+.winner .cam { padding-top: 190px; }
+.question .cam { display: grid; place-content: center; padding: 0; }
+.bignum { position: absolute; right: 40px; bottom: -80px; font: 900 700px/1 Tektur, sans-serif; color: transparent; -webkit-text-stroke: 4px color-mix(in srgb, var(--team) 60%, transparent); }
+.cut { position: absolute; right: 30px; bottom: 0; height: 960px; filter: drop-shadow(0 30px 60px rgba(0, 0, 0, .6)); }
+.slamname { position: relative; z-index: 2; font: 900 210px/.88 Tektur, sans-serif; text-transform: uppercase; letter-spacing: -.02em; margin-top: 20px; transform-origin: 0 60%; }
+.slamword { position: relative; z-index: 2; font: 900 150px/.9 Tektur, sans-serif; text-transform: uppercase; color: var(--team); transform-origin: 0 60%; }
+.slamname.long { font-size: 158px; }
+.center.slamname, .center.slamword { transform-origin: 50% 60%; }
+.facts { position: relative; z-index: 2; display: flex; gap: 18px; margin-top: 46px; flex-wrap: wrap; }
+.facts > div { padding: 18px 24px; border-radius: 12px; background: rgba(10, 12, 16, .78); border: 1px solid var(--line); }
+.facts span { display: block; font: 500 20px/1 "Fira Code", monospace; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; }
+.facts b { display: block; font: 800 52px/1 Tektur, sans-serif; margin-top: 10px; }
+
+.podium { position: absolute; left: 0; right: 0; bottom: 60px; display: flex; justify-content: center; align-items: flex-end; gap: 36px; }
+.step { width: 430px; display: flex; flex-direction: column; align-items: center; }
+.step img { height: 260px; margin-bottom: -4px; filter: drop-shadow(0 20px 40px rgba(0, 0, 0, .55)); }
+.block { width: 100%; height: calc(var(--h) * 420px); border-radius: 16px 16px 0 0; transform-origin: 50% 100%; display: flex; flex-direction: column; align-items: center; padding-top: 22px;
+  background: linear-gradient(180deg, var(--c), color-mix(in srgb, var(--c) 35%, #0b0d11)); box-shadow: inset 0 2px 0 rgba(255, 255, 255, .35); }
+.block .p { font: 900 96px/1 Tektur, sans-serif; text-shadow: 0 4px 24px rgba(0, 0, 0, .4); }
+.block .d { font: 800 44px/1 Tektur, sans-serif; margin-top: 6px; } .block .t { font: 600 22px/1 Inter, sans-serif; margin-top: 8px; opacity: .85; }
+.block .f { font: 500 20px/1 "Fira Code", monospace; margin-top: 14px; padding: 8px 12px; border-radius: 8px; background: rgba(0, 0, 0, .3); }
+
+.verdicts { display: grid; gap: 26px; margin-top: 60px; max-width: 1500px; }
+.verdict { display: grid; grid-template-columns: 300px 1fr; align-items: center; gap: 40px; padding: 26px 40px; border-radius: 18px; background: rgba(255, 255, 255, .04); border: 1px solid var(--line); transform-origin: 0 50%; }
+.verdict > b { font: 900 120px/1 Tektur, sans-serif; font-variant-numeric: tabular-nums; } .verdict > b.ok { color: var(--ok); } .verdict > b.bad { color: var(--bad); }
+.vk { font: 800 46px/1.1 Tektur, sans-serif; text-transform: uppercase; } .vx { font: 500 28px/1.3 Inter, sans-serif; color: var(--muted); margin-top: 10px; }
+
+.bigstat { display: flex; align-items: baseline; gap: 26px; margin-top: 34px; position: relative; transform-origin: 0 50%; }
+.bigstat b { position: relative; overflow: hidden; font: 900 190px/1 Tektur, sans-serif; color: var(--ok); }
+.bigstat span { font: 600 40px/1.15 Tektur, sans-serif; text-transform: uppercase; max-width: 640px; }
+.bigstat.left b { color: var(--ink); }
+.chart { position: absolute; left: 72px; right: 72px; bottom: 150px; height: 360px; display: flex; gap: 10px; }
+.chart .axis { position: absolute; left: 0; right: 0; top: 50%; height: 2px; background: rgba(255, 255, 255, .25); }
+.chart .col { flex: 1; position: relative; } .chart .col i { position: absolute; left: 12%; right: 12%; border-radius: 4px; }
+.chart .col span { position: absolute; bottom: -34px; left: 0; right: 0; text-align: center; font: 500 16px/1 "Fira Code", monospace; color: var(--muted); }

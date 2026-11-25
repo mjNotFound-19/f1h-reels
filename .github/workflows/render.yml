@@ -1,0 +1,37 @@
+# Renders an f1.h reel from the public site data and keeps it as a downloadable artifact for 30 days.
+# Started by the private f1.h agent (workflow_dispatch needs write access to this repository); no secrets are used.
+name: render reel
+run-name: reel ${{ inputs.name }}
+on:
+  workflow_dispatch:
+    inputs:
+      kind: { description: 'result, forecast or sprint', required: true, type: choice, options: [result, forecast, sprint] }
+      name: { description: 'file name, e.g. f1h-R22-result', required: true, type: string }
+      url: { description: 'site', required: false, type: string, default: 'https://manasjha.online/f1/' }
+permissions: { contents: read }
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.14' }
+      - uses: actions/setup-node@v4
+        with: { node-version: '22' }
+      - name: Tools
+        run: |
+          pip install numpy==2.3.4 scipy==1.16.3
+          npm install -g @playwright/cli
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+      - name: Render
+        env: { TZ: America/Toronto }
+        run: bash web/scripts/make-video.sh "${{ inputs.kind }}" "${{ inputs.url }}" "${{ inputs.name }}"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: reel-${{ inputs.name }}
+          path: |
+            docs/video/${{ inputs.name }}*.mp4
+            docs/video/${{ inputs.name }}-thumbnail.jpg
+            docs/video/${{ inputs.name }}-render.log
+          retention-days: 30

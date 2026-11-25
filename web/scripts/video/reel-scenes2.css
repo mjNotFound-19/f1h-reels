@@ -1,0 +1,26 @@
+/* f1.h reel, 1920 x 1080: bars, circuit, plan, end card. */
+.bars { margin-top: 64px; display: grid; gap: 22px; }
+.bar { display: grid; grid-template-columns: 330px 1fr 170px; align-items: center; gap: 30px; }
+.bar .who { display: flex; align-items: center; gap: 18px; font: 800 44px/1 Tektur, sans-serif; } .bar .who small { font: 600 22px/1 Inter, sans-serif; color: var(--muted); }
+.bar .who img { width: 76px; height: 76px; border-radius: 14px; object-fit: cover; object-position: top; background: rgba(255, 255, 255, .06); }
+.bar .track { height: 60px; border-radius: 10px; background: rgba(255, 255, 255, .05); overflow: hidden; }
+.bar .fill { height: 100%; transform-origin: 0 50%; border-radius: 10px; background: linear-gradient(90deg, color-mix(in srgb, var(--c) 60%, #000), var(--c)); box-shadow: 0 0 30px color-mix(in srgb, var(--c) 50%, transparent); }
+.bar .pct { font: 900 56px/1 Tektur, sans-serif; text-align: right; font-variant-numeric: tabular-nums; }
+
+.circuit svg { position: absolute; right: 90px; top: 130px; width: 1050px; height: 860px; overflow: visible; }
+.circuit .facts { flex-direction: column; width: 520px; }
+
+.plan { display: flex; align-items: center; gap: 26px; margin-top: 70px; }
+.tyre { display: inline-grid; place-items: center; width: 190px; height: 190px; border-radius: 50%; border: 24px solid var(--tc); background: #111; font: 900 70px/1 Tektur, sans-serif; box-shadow: 0 0 40px color-mix(in srgb, var(--tc) 40%, transparent); }
+.arrow { font: 600 60px/1 "Fira Code", monospace; color: var(--muted); }
+
+.end .cam { display: grid; place-content: center; text-align: center; padding: 0; gap: 26px; }
+.end .logo { font: 600 150px/1 "Fira Code", monospace; transform-origin: 50% 50%; } .end .logo b { color: var(--red); font-weight: 600; }
+.end .url { position: relative; overflow: hidden; font: 600 72px/1.2 "Fira Code", monospace; } .end .url b { color: var(--red); font-weight: 600; }
+.end .line { font: 700 34px/1.4 Tektur, sans-serif; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+
+/* the team's 3D car (the hero of lights out) and its fly-bys between scenes */
+.carhost { position: absolute; right: -60px; bottom: 10px; width: 1300px; height: 780px; z-index: 1; }
+.carhost canvas { width: 100% !important; height: 100% !important; display: block; }
+.winner .slamname, .winner .slamword, .winner .facts, .winner .kicker { position: relative; z-index: 3; text-shadow: 0 6px 30px rgba(0, 0, 0, .55); }
+.flyby { position: absolute; left: 0; top: 34%; width: 1500px; height: auto; opacity: 0; filter: drop-shadow(0 30px 40px rgba(0, 0, 0, .6)); }

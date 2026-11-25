@@ -1,0 +1,28 @@
+/* f1.h reel as an Instagram story: 1080 x 1920, the same scenes stacked for a phone (safe zones top and bottom). */
+html.story, html.story body { width: 1080px; height: 1920px; }
+.story .brand { top: 110px; left: 64px; } .story .credit { left: 64px; right: 64px; bottom: 70px; font-size: 14px; line-height: 1.4; }
+.story .cam { padding: 260px 64px 220px; }
+.story .title { font-size: 84px; } .story .sub { font-size: 32px; }
+.story .lights { gap: 18px; } .story .gantry { padding: 16px 12px; gap: 14px; border-radius: 18px; } .story .lamp { width: 150px; height: 150px; }
+.story .lightsup .kicker { font-size: 24px; white-space: normal; padding: 0 60px; }
+.story .lightsup .letters { white-space: normal; }
+.story .winner .cam { padding-top: 260px; }
+.story .slamname { font-size: 150px; } .story .slamname.long { font-size: 112px; } .story .slamword { font-size: 120px; }
+.story .question .slamname { font-size: 170px; } .story .question .slamword { font-size: 130px; }
+.story .cut { left: 0; right: 0; margin: 0 auto; height: 1080px; bottom: 0; }
+.story .bignum { font-size: 600px; right: -30px; bottom: 260px; }
+.story .facts { gap: 14px; margin-top: 34px; } .story .facts b { font-size: 46px; }
+.story .podium { bottom: 240px; gap: 16px; } .story .step { width: 312px; } .story .step img { height: 250px; }
+.story .block { height: calc(var(--h) * 560px); } .story .block .p { font-size: 80px; } .story .block .d { font-size: 40px; } .story .block .f { font-size: 17px; }
+.story .verdicts { margin-top: 70px; gap: 30px; } .story .verdict { grid-template-columns: 1fr; gap: 14px; padding: 30px 34px; }
+.story .verdict > b { font-size: 130px; } .story .vk { font-size: 42px; }
+.story .bigstat { flex-direction: column; gap: 10px; margin-top: 50px; } .story .bigstat b { font-size: 220px; } .story .bigstat span { font-size: 40px; }
+.story .chart { left: 64px; right: 64px; bottom: 320px; height: 520px; gap: 5px; } .story .chart .col span { font-size: 11px; }
+.story .bars { margin-top: 80px; gap: 34px; } .story .bar { grid-template-columns: 1fr 150px; grid-template-areas: "who pct" "track track"; gap: 14px 20px; }
+.story .bar .who { grid-area: who; } .story .bar .track { grid-area: track; height: 54px; } .story .bar .pct { grid-area: pct; font-size: 60px; }
+.story .circuit svg { top: auto; bottom: 230px; right: 40px; width: 1000px; height: 900px; } .story .circuit .facts { flex-direction: row; width: auto; }
+.story .plan { flex-wrap: wrap; gap: 18px; margin-top: 120px; justify-content: center; } .story .tyre { width: 220px; height: 220px; }
+.story .plan + .sub { text-align: center; margin-top: 70px; font-size: 36px; }
+.story .end .logo { font-size: 120px; } .story .end .url { font-size: 64px; } .story .end .line { font-size: 30px; padding: 0 70px; }
+.story .carhost { right: -140px; left: -140px; width: auto; bottom: 330px; height: 900px; }
+.story .flyby { width: 1300px; top: 40%; }
