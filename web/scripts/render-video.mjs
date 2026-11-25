@@ -40,6 +40,11 @@ if (errors.length || !(await page.evaluate(() => !!window.reel))) { console.erro
 await page.evaluate(() => window.reel.ready);
 const { duration, poster, cues } = await page.evaluate(() => ({ duration: window.reel.duration, poster: window.reel.poster, cues: window.reel.cues }));
 
+if (process.env.REEL_CUES) {              // cues only (to rebuild a soundtrack without rendering frames)
+  fs.writeFileSync(process.env.REEL_CUES, JSON.stringify({ duration, fps: FPS, cues }, null, 1));
+  console.log(`cues: ${cues.length} over ${duration.toFixed(2)} s -> ${process.env.REEL_CUES}`);
+  await browser.close(); process.exit(0);
+}
 if (process.env.REEL_STILLS) {            // check mode: only the listed moments, as stills (no video)
   fs.mkdirSync(OUT, { recursive: true });
   for (const t of process.env.REEL_STILLS.split(",").map(Number)) {

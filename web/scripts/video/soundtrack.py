@@ -1,14 +1,11 @@
-"""Soundtrack for an f1.h reel: the original music (web/scripts/make-music.py, 126 BPM, D minor) with sound effects
-on the reel's cues, tuned to D minor and mixed under the music. Generated here: no samples, no third-party audio.
+"""Soundtrack for an f1.h reel: the original score (music.py: 126 BPM, D minor, written to the edit's cues) with the
+start-light beeps, the synthesized engine (engine.py) and small effects on the reel's cues, mixed as one piece.
+Generated here: no samples, no third-party audio.
 
     python web/scripts/video/soundtrack.py <cues.json> <out.wav>
-
-The music is held back (quiet, muffled) while the start lights come on and drops in at lights out.
 """
 import json
-import subprocess
 import sys
-import tempfile
 import wave
 from pathlib import Path
 
@@ -17,6 +14,7 @@ from scipy.signal import butter, fftconvolve, lfilter
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import engine  # noqa: E402  (the synthesized F1 power unit)
+import music as score  # noqa: E402  (the original score, cut to the edit)
 
 SR = 44100
 rng = np.random.default_rng(21)
@@ -89,16 +87,7 @@ def main(cues_path, out):
     c = json.loads(Path(cues_path).read_text())
     dur, cues = c['duration'], c['cues']
     n = int(dur * SR) + SR
-    with tempfile.TemporaryDirectory() as td:                    # the music bed
-        bed = Path(td) / 'music.wav'
-        subprocess.run([sys.executable, str(Path(__file__).resolve().parents[1] / 'make-music.py'), f'{dur + 1:.2f}', str(bed)], check=True)
-        music = np.zeros(n); m = read_wav(bed)[:n]; music[: len(m)] = m
-    out_t = next((q['t'] for q in cues if q['type'] == 'lightsout'), 0.0)
-    k = int(out_t * SR)                                          # held back until lights out: quiet and muffled
-    if k:
-        held = filt(music[:k], 'low', 700) * 0.35
-        fade = np.clip(np.arange(k) / (0.3 * SR), 0, 1)
-        music[:k] = held * fade
+    music = score.build(cues, dur)[:n]                           # the score, written to this edit (music.py)
     fx = np.zeros(n); duck = np.ones(n); car = np.zeros((n, 2))
     own_lights = Path(__file__).with_name('sfx') / 'lights.wav'        # Manas's own clip, if he adds one
     first_light = next((q['t'] for q in cues if q['type'] == 'light'), None)
@@ -107,24 +96,22 @@ def main(cues_path, out):
     for q in cues:
         i = int(q['t'] * SR)
         if q['type'] in ('blip', 'launch', 'passby'):              # the engine (stereo)
-            s = (engine.blip(q.get('n', 0)) * 0.5 if q['type'] == 'blip' else engine.launch() if q['type'] == 'launch'
+            s = (engine.blip(q.get('n', 0)) * 0.5 if q['type'] == 'blip' else engine.launch() * 0.75 if q['type'] == 'launch'
                  else engine.passby(direction=q.get('dir', 1)) * 1.1)
             s = np.stack([s, s], axis=1) if s.ndim == 1 else s
             j = min(n, i + len(s)); car[i:j] += s[: j - i]
             if q['type'] == 'launch':                              # the music gives way to the launch, then returns
-                d = int(3.2 * SR); jj = min(n, i + d); duck[i:jj] = np.minimum(duck[i:jj], 0.3 + 0.7 * np.linspace(0, 1, jj - i) ** 2)
+                d = int(2.4 * SR); jj = min(n, i + d); duck[i:jj] = np.minimum(duck[i:jj], 0.55 + 0.45 * np.linspace(0, 1, jj - i) ** 2)
             continue
         if q['type'] == 'light' and own_lights.exists():
             continue
-        s = sfx(q['type'])
+        if q['type'] in ('lightsout', 'end', 'cut'):              # the score plays these
+            continue
+        s = sfx(q['type']) * (0.5 if q['type'] == 'impact' else 1.0)
         if q.get('soft'): s = s * 0.6
         j = min(n, i + len(s)); fx[i:j] += s[: j - i]
-        if q['type'] in ('lightsout', 'impact', 'end'):           # the music dips under the big hits
-            d = int(0.35 * SR); jj = min(n, i + d); duck[i:jj] = np.minimum(duck[i:jj], 0.55 + 0.45 * np.linspace(0, 1, jj - i))
-    end_t = next((q['t'] for q in cues if q['type'] == 'end'), dur)
-    tail = np.clip(1 - (np.arange(n) / SR - (end_t + 1.6)) / (dur - end_t - 1.0 + 0.6), 0, 1)
-    mono = 0.8 * music * duck * tail + reverb(fx)
-    mix = mono[:, None] + 0.55 * car                              # the engine sits in front, in stereo
+    fade = np.clip((dur - np.arange(n) / SR) / 0.6, 0, 1)        # the last 0.6 s fades out
+    mix = (0.85 * music * duck[:, None] + reverb(fx)[:, None] + 0.5 * car) * fade[:, None]   # engine in front, in stereo
     mix = np.tanh(1.2 * mix) / np.tanh(1.2)                      # gentle limiter
     mix = mix / (np.max(np.abs(mix)) + 1e-9) * 0.89              # -1 dBFS peak
     mix[: int(0.01 * SR)] *= np.linspace(0, 1, int(0.01 * SR))[:, None]

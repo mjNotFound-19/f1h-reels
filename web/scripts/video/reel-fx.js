@@ -50,6 +50,7 @@ export function wipe(t, color) {
     const d = (i % 3) * 0.04;
     tw(s, t - 0.3 + d, 0.55, { x: -900, o: 0.9 }, { x: 2600, o: 0 }, "inOut");
   }
+  cue(t, "cut");                                // the music builds into the cut and crashes on it
   if (!wipe.car) cue(t - 0.3, "whoosh");        // with a car to fly past, the pass-by is the sound
   flyby(t, wipe.car);
 }
