@@ -54,7 +54,8 @@ const cdp = await ctx.newCDPSession(page);
 const n = Math.ceil(duration * FPS), t0 = Date.now(), lines = ["ffconcat version 1.0"];
 for (let i = 0; i < n; i++) {
   await page.evaluate((t) => window.reel.seek(t), i / FPS);
-  const { data } = await cdp.send("Page.captureScreenshot", { format: "jpeg", quality: 92, optimizeForSpeed: true });
+  // the clip's scale is what makes the capture full resolution (without it Chrome returns layout-size pixels)
+  const { data } = await cdp.send("Page.captureScreenshot", { format: "jpeg", quality: 92, optimizeForSpeed: true, clip: { x: 0, y: 0, width: W, height: H, scale: DPR } });
   const name = `f${String(i).padStart(6, "0")}.jpg`;
   fs.writeFileSync(path.join(FR, name), Buffer.from(data, "base64"));
   lines.push(`file '${name}'`, `duration ${(1 / FPS).toFixed(6)}`);
