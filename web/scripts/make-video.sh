@@ -22,6 +22,7 @@ cd "$ROOT"
 mkdir -p "$OUT"
 X264=(-c:v libx264 -pix_fmt yuv420p -movflags +faststart)
 
+if [ "${REEL_ONLY:-}" != story ]; then                     # REEL_ONLY=story: only the Instagram story
 # 16:9, native 4K at 120 fps, with the soundtrack
 node web/scripts/render-video.mjs "$KIND" "$URL" docs/video | tee "$OUT/$NAME-render.log"
 python web/scripts/video/soundtrack.py "$OUT/frames/cues.json" "$OUT/$NAME.wav"
@@ -33,6 +34,8 @@ cd "$OUT"
 rm -rf frames
 ffmpeg -v error -y -i "$NAME-4k.mp4" -vf "fps=60" "${X264[@]}" -preset medium -crf 17 -c:a copy "$NAME-linkedin.mp4"
 ffmpeg -v error -y -i "$NAME-4k.mp4" -vf "fps=60,scale=1920:1080:flags=lanczos" "${X264[@]}" -preset slow -crf 17 -c:a copy "$NAME.mp4"
+
+fi
 
 # 9:16 story, drawn at 2160 x 3840, 60 fps, with the soundtrack
 cd "$ROOT"
@@ -46,5 +49,6 @@ rm -rf frames
 ffmpeg -v error -y -i "$NAME-story-4k.mp4" -vf "scale=1080:1920:flags=lanczos" "${X264[@]}" -preset slow -b:v 5000k -maxrate 7000k -bufsize 14000k \
   -c:a aac -b:a 192k "$NAME-story.mp4"
 rm -f "$NAME.wav" "$NAME-story.wav"
+if [ "${REEL_ONLY:-}" = story ]; then echo "video: $OUT/$NAME-story.mp4"; exit 0; fi
 ffprobe -v error -show_entries stream=width,height,r_frame_rate -show_entries format=duration,size -of csv=p=0 "$NAME-4k.mp4"
 echo "video: $OUT/$NAME-4k.mp4"
