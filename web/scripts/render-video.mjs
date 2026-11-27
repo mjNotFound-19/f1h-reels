@@ -57,6 +57,31 @@ if (process.env.REEL_STILLS) {            // check mode: only the listed moments
 const FR = path.join(OUT, "frames"); fs.rmSync(FR, { recursive: true, force: true }); fs.mkdirSync(FR, { recursive: true });
 const cdp = await ctx.newCDPSession(page);
 const n = Math.ceil(duration * FPS), t0 = Date.now(), lines = ["ffconcat version 1.0"];
+// REEL_PART="i/N": only the i-th of N equal slices of the frames (the cloud renders the slices on N machines at once)
+const [pi_, pn_] = (process.env.REEL_PART || "0/1").split("/").map(Number);
+const lo = Math.floor((n * pi_) / pn_), hi = Math.floor((n * (pi_ + 1)) / pn_);
+if (pn_ > 1) {
+  const capture = async (t, i) => {
+    await page.evaluate((x) => window.reel.seek(x), t);
+    const { data } = await cdp.send("Page.captureScreenshot", { format: "jpeg", quality: 92, optimizeForSpeed: true, clip: { x: 0, y: 0, width: W, height: H, scale: DPR } });
+    fs.writeFileSync(path.join(FR, `f${String(i).padStart(6, "0")}.jpg`), Buffer.from(data, "base64"));
+  };
+  for (let i = lo; i < hi; i++) {
+    // frame 0 is the poster (a settled frame), as in a whole render
+    await capture(i === 0 && poster ? Math.min(n - 1, Math.round(poster * FPS)) / FPS : i / FPS, i);
+    lines.push(`file 'f${String(i).padStart(6, "0")}.jpg'`, `duration ${(1 / FPS).toFixed(6)}`);
+    if ((i - lo) % 300 === 0) console.log(`frame ${i} (${lo}-${hi - 1} of ${n})`);
+  }
+  lines.push(`file 'f${String(hi - 1).padStart(6, "0")}.jpg'`);
+  fs.writeFileSync(path.join(FR, "list.txt"), lines.join("\n"));
+  if (pi_ === 0) {
+    fs.writeFileSync(path.join(FR, "cues.json"), JSON.stringify({ duration, fps: FPS, cues }, null, 1));
+    fs.copyFileSync(path.join(FR, "f000000.jpg"), path.join(FR, "poster.jpg"));
+  }
+  await browser.close();
+  console.log(`part ${pi_ + 1}/${pn_}: frames ${lo}-${hi - 1} of ${n} (generated in ${((Date.now() - t0) / 1000).toFixed(0)} s)`);
+  process.exit(0);
+}
 for (let i = 0; i < n; i++) {
   await page.evaluate((t) => window.reel.seek(t), i / FPS);
   // the clip's scale is what makes the capture full resolution (without it Chrome returns layout-size pixels)
