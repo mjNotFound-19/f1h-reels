@@ -1,13 +1,14 @@
 # Renders an f1.h reel from the public site data and keeps it as a downloadable artifact for 30 days.
 # Started by the private f1.h agent (workflow_dispatch needs write access to this repository); no secrets are used.
 name: render reel
-run-name: reel ${{ inputs.name }}
+run-name: reel ${{ inputs.name }} ${{ inputs.only }}
 on:
   workflow_dispatch:
     inputs:
       kind: { description: 'result, forecast or sprint', required: true, type: choice, options: [result, forecast, sprint] }
       name: { description: 'file name, e.g. f1h-R22-result', required: true, type: string }
       url: { description: 'site', required: false, type: string, default: 'https://manasjha.online/f1/' }
+      only: { description: 'story or wide (one part per run, so the story is not held up)', required: true, type: choice, options: [story, wide] }
 permissions: { contents: read }
 jobs:
   render:
@@ -25,11 +26,11 @@ jobs:
           npm install -g @playwright/cli
           sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
       - name: Render
-        env: { TZ: America/Toronto }
+        env: { TZ: America/Toronto, REEL_ONLY: '${{ inputs.only }}', REEL_FPS: '60', REEL_STORY_DPR: '1' }   # no GPU here: 4K at 60 fps, story at 1080 x 1920
         run: bash web/scripts/make-video.sh "${{ inputs.kind }}" "${{ inputs.url }}" "${{ inputs.name }}"
       - uses: actions/upload-artifact@v4
         with:
-          name: reel-${{ inputs.name }}
+          name: reel-${{ inputs.name }}-${{ inputs.only }}
           path: |
             docs/video/${{ inputs.name }}*.mp4
             docs/video/${{ inputs.name }}-thumbnail.jpg
