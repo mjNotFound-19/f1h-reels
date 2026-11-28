@@ -14,6 +14,7 @@ env:
   TZ: America/Toronto
   REEL_FPS: '60'          # no GPU here: the 16:9 is 4K at 60 fps (LinkedIn plays 60 at most)
   REEL_STORY_DPR: '1'     # and the story is drawn at 1080 x 1920 (what Instagram shows)
+  REEL_CAR: still         # the 3D car drawn once and moved like a photo (a 3D frame takes seconds without a GPU)
 jobs:
   part:                   # the frames, split across several machines at once
     runs-on: ubuntu-latest

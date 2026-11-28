@@ -31,7 +31,8 @@ await ctx.route("http://reel.local/**", (route) => {
                  ".glb": "model/gltf-binary", ".wasm": "application/wasm" }[path.extname(file)] || "application/octet-stream";
   route.fulfill({ status: 200, contentType: type, body: fs.readFileSync(file) });
 });
-await ctx.addInitScript(([s, k, f]) => { window.__SITE = s; window.__KIND = k; window.__FORMAT = f; }, [site, KIND, STORY ? "story" : "wide"]);
+await ctx.addInitScript(([s, k, f, c]) => { window.__SITE = s; window.__KIND = k; window.__FORMAT = f; window.__CAR_STILL = c; },
+  [site, KIND, STORY ? "story" : "wide", process.env.REEL_CAR === "still"]);   // REEL_CAR=still: the 3D car drawn once (no GPU)
 const page = await ctx.newPage();
 const errors = []; page.on("pageerror", (e) => errors.push(e.message));
 await page.goto("http://reel.local/reel.html", { waitUntil: "load" });
