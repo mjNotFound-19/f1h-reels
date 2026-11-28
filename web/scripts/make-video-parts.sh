@@ -33,7 +33,7 @@ cd "$PARTS"
 ls seg-*.mp4 | sort -t- -k2 -n | sed "s/.*/file '&'/" > segs.txt
 ffmpeg -v error -y -f concat -safe 0 -i segs.txt -c copy joined.mp4
 python "$ROOT/web/scripts/video/soundtrack.py" cues.json sound.wav
-FRAMES=$(ffprobe -v error -count_packets -select_streams v:0 -show_entries stream=nb_read_packets -of csv=p=0 joined.mp4)
+FRAMES=$(ffprobe -v error -count_packets -select_streams v:0 -show_entries stream=nb_read_packets -of csv=p=0 joined.mp4 | tr -dc 0-9)
 DUR=$(python -c "import json;print(json.load(open('cues.json'))['duration'])")
 cd "$OUT"
 if [ "$ONLY" = story ]; then
